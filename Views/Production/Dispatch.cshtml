@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Dispatch";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div id="Summary">
+    <div>
+        <h3 class="text-secondary">Dispatch Summary</h3>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-responsive" id="tblSummary"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        Load();
+    });
+
+    function Load() {
+        $.ajax({
+            type: 'POST',
+            url: '/Production/LoadDispatch',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response == "0" || response == "[]") {
+                    $("#tblSummary").empty();
+                    return;
+                }
+                $("#tblSummary").empty();;
+                Table($("#tblSummary"), response, "Summary", "Summary");
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function Update(Id) {
+        var data = { 'WorkOrderDId': Id };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Production/UpdateDispatch',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.Status != 0) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.Message,
+                        icon: 'success'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.Message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

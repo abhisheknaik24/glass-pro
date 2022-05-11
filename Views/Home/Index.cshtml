@@ -1,0 +1,45 @@
+﻿@model MyApp.Models.UserModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="d-flex justify-content-center" style="margin-top: 200px;">
+            <div class="card-group" style="width:800px;">
+                <div class="card p-3">
+                    <div class="card-body">
+                        <h1>Login</h1>
+                        <p>Sign In to your account</p>
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @id = "Username", name = "Username", placeholder = "Username", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { type = "Password", @class = "form-control", @id = "Password", name = "Password", placeholder = "Password", autocomplete = "off" } })
+                            </div>
+                            <div class="mb-3 form-check">
+                                @Html.EditorFor(model => model.RememberMe, new { htmlAttributes = new { type = "checkbox", @class = "custom-control-input", @id = "rememberMe", name = "rememberMe", autocomplete = "off" } })
+                                <label class="form-check-label">Remember Me</label>
+                            </div>
+                            <span class="text-danger">@Html.DisplayFor(model => model.ErrorMessage)</span>
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                                @Html.ActionLink("Register", "Registration", "Home")
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card d-flex justify-content-center p-3 bg-warning">
+                    <h1 class="text-center fw-bolder">Glass Pro</h1>
+                </div>
+            </div>
+        </div>
+    }
+</div>

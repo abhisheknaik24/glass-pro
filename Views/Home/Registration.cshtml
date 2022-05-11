@@ -1,0 +1,358 @@
+﻿
+@{
+    ViewBag.Title = "Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="Entry">
+    <div class="card m-3">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-lg-2 col-sm-12">
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-primary" title="Back" data-toggle="tooltip" data-placement="bottom" onclick="Back()"><i class="fa fa-arrow-left"></i></button>
+                        <h3 class="text-secondary">Registration</h3>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row mb-3">
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Email" placeholder="Email" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12 show" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">OTP</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="OTP" placeholder="OTP" maxlength="4" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12 hide">
+                    <div class="form-group">
+                        <label class="form-label" style="visibility: hidden;">.</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <button class="btn btn-primary" title="Verify" data-toggle="tooltip" data-placement="bottom" onclick="VerifyEmail()"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12 show" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" style="visibility: hidden;">.</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <button class="btn btn-primary" title="Verify" data-toggle="tooltip" data-placement="bottom" onclick="VerifyOTP()"><i class="fa fa-check-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Username" placeholder="Username" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="password" class="form-control" id="Password" placeholder="Password" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="password" class="form-control" id="ConfirmPassword" placeholder="Confirm Password" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Name" placeholder="Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Designation</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Designation" placeholder="Designation" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Contact No</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="ContactNo" placeholder="Contact No" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-8 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Address" placeholder="Address" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="State" placeholder="State" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="City" placeholder="City" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Pin Code</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="PinCode" placeholder="Pin Code" maxlength="6" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <button class="btn btn-success" title="Save" data-toggle="tooltip" data-placement="bottom" onclick="Save()"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Back() {
+        location.href = '@Url.Action("Index", "Home")';
+    }
+
+    $("#Email").on('change', function () {
+        var Email = $("#Email").val();
+        var reg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+        var resultEmail = reg.test(Email);
+
+        if (Email == "") {
+            $('#Email').addClass("is-invalid");
+            return false;
+        } else {
+            $('#Email').removeClass("is-invalid");
+        }
+
+        if (resultEmail == false) {
+            $('#Email').addClass("is-invalid");
+            return resultEmail;
+        } else {
+            $('#Email').removeClass("is-invalid");
+        }
+    });
+
+    function GenerateOTP() {
+        var digits = '0123456789';
+        var otpLength = 4;
+        var otp = '';
+        for (let i = 1; i <= otpLength; i++) {
+            var index = Math.floor(Math.random() * (digits.length));
+            otp = otp + digits[index];
+        }
+        return otp;
+    }
+
+    function VerifyEmail() {
+        var OTP = GenerateOTP();
+
+        var Email = $("#Email").val();
+        if (Email == "") {
+            $('#Email').addClass("is-invalid");
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter email!",
+                icon: 'error'
+            });
+            return false;
+        }
+        else {
+            $('#Email').removeClass("is-invalid");
+
+            var Message = "Hello, OTP for registration is " + OTP + "";
+
+            var data = { "Email": Email, "OTP": OTP, "Message": Message };
+            data = JSON.stringify(data);
+
+            $.ajax({
+                type: 'POST',
+                url: '/Home/SendEmail',
+                data: data,
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    if (response.Status != 0) {
+                        $(".hide").hide();
+                        $(".show").show();
+                    }
+                },
+                error: function (error) {
+                    alert(error.responseText);
+                }
+            });
+        }
+    }
+
+    function Save() {
+        var Check = true;
+        var element = {};
+        element.Email = $("#Email").val();
+        element.Username = $("#Username").val();
+        element.Password = $("#Password").val();
+        element.ConfirmPassword = $("#ConfirmPassword").val();
+        element.Name = $("#Name").val();
+        element.Designation = $("#Designation").val();
+        element.ContactNo = $("#ContactNo").val();
+        element.Address = $("#Address").val();
+        element.State = $("#State").val();
+        element.City = $("#City").val();
+        element.PinCode = $("#PinCode").val();
+
+        if (element.Email == "") {
+            $('#Email').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Email').removeClass("is-invalid");
+        }
+
+        if (element.Username == "") {
+            $('#Username').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Username').removeClass("is-invalid");
+        }
+
+        if (element.Password == "") {
+            $('#Password').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Password').removeClass("is-invalid");
+        }
+
+        if (element.ConfirmPassword == "") {
+            $('#ConfirmPassword').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#ConfirmPassword').removeClass("is-invalid");
+        }
+
+        if (element.Name == "") {
+            $('#Name').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Name').removeClass("is-invalid");
+        }
+
+        if (element.ContactNo == "") {
+            $('#ContactNo').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#ContactNo').removeClass("is-invalid");
+        }
+
+        if (element.Password != element.ConfirmPassword) {
+            Swal.fire({
+                title: 'Error',
+                text: "Password and confirm password will be same!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        var data = { "Element": element };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/SaveRegistration',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.Status != 0) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.Message,
+                        icon: 'success'
+                    }).then((result) => {
+                        location.href = '@Url.Action("Index", "Home")';
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.Message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

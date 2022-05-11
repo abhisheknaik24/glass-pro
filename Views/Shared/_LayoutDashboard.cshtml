@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Images/favicon.jpg" />
+    <title>@ViewBag.Title | Glass Pro</title>
+    @Styles.Render("https://fonts.googleapis.com/css?family=Comfortaa:300,400,700")
+    @Styles.Render("https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css")
+    @Styles.Render("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css")
+    @Styles.Render("https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css")
+    @Styles.Render("https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css")
+    @Styles.Render("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css")
+    @Styles.Render("https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.9/sweetalert2.css")
+    @Styles.Render("~/Content/Site.css")
+</head>
+<body>
+    @Scripts.Render("https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js")
+    @Scripts.Render("https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js")
+    @Scripts.Render("https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js")
+    @Scripts.Render("https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js")
+    @Scripts.Render("https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js")
+    @Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js")
+    @Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js")
+    @Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js")
+    @Scripts.Render("https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js")
+    @Scripts.Render("https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js")
+    @Scripts.Render("https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js")
+    @Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js")
+    @Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.4.9/sweetalert2.min.js")
+    @Scripts.Render("https://cdn.jsdelivr.net/npm/chart.js")
+
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark py-3" style="background-image: linear-gradient(to right, #ff7088, #fdb901); ">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bolder mx-5" href="/Dashboard/Dashboard">Glass Pro</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="@Url.Action("Settings", "Master")" class="nav-link text-white"><i class="fa fa-gear mr-2"></i></a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-light" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div class="d-flex" style="height: 100vh; top: 0; left: 0; bottom: 0;">
+            <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 15%;">
+                <div class="d-flex flex-column align-items-center text-white text-decoration-none">
+                    <img src="~/images/avatar.png" alt="user" class="rounded-circle" height="50" width="50">
+                    <span class="fs-4">@Session["Username"].ToString()</span>
+                    <a href="@Url.Action("Index", "Home")" class="text-white"><i class="fa fa-sign-out"></i></a>
+                </div>
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Dashboard", "Dashboard")" class="nav-link text-white"><i class="fa fa-tachometer mr-2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Item", "Master")" class="nav-link text-white"><i class="fa fa-database mr-2"></i> Item</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Purchase", "Purchase")" class="nav-link text-white"><i class="fa fa-shopping-cart mr-2"></i> Purchase</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Inventory", "Master")" class="nav-link text-white"><i class="fa fa-bar-chart mr-2"></i> Inventory</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("WorkOrder", "WorkOrder")" class="nav-link text-white"><i class="fa fa-tasks mr-2"></i> Work Order</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Cutting", "Production")" class="nav-link text-white"><i class="fa fa-cut mr-2"></i> Cutting</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Polishing", "Production")" class="nav-link text-white"><i class="fa fa-asterisk mr-2"></i> Polishing</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Fabrication", "Production")" class="nav-link text-white"><i class="fa fa-gavel mr-2"></i> Fabrication</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Toughening", "Production")" class="nav-link text-white"><i class="fa fa-map-pin mr-2"></i> Toughening</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("DGU", "Production")" class="nav-link text-white"><i class="fa fa-adjust mr-2"></i> DGU</a>
+                    </li>
+                    <li class="nav-item p-1">
+                        <a href="@Url.Action("Dispatch", "Production")" class="nav-link text-white"><i class="fa fa-archive mr-2"></i> Dispatch</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="p-3" style="width: 85%;">@RenderBody()</div>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $(".datePicker").datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: 'dd M yyyy',
+                language: "tr",
+                changeMonth: true,
+                changeYear: true,
+            });
+
+            $('body').tooltip({ selector: '[data-toggle="tooltip"]' });
+
+            var colors = ['#6f6456', '#cddc49', '#cb7e94', '#e94b30', '#fee659', '#a1cfdd', '#01c5c4', '#b8de6f', '#f39233', '#c56183', '#b2deec', '#28abb9', '#2d6187', '#cc0e74'];
+            Array.prototype.getRandom = function (e) {
+                var i = Math.floor(Math.random() * this.length);
+                if (e && i in this) {
+                    return this.splice(i, 1)[0];
+                }
+                return this[i];
+            }
+            $('.randomColor').each(function () {
+                var color = colors.getRandom();
+                $(this).css("background", color);
+            });
+
+            var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            var d = new Date();
+            var name = month[d.getMonth()];
+            $("#Month").html(name + " Month Records");
+        });
+
+        function Table(tableName, data, title, fileName) {
+            try {
+                if (tableName == null) {
+                    alert("table not exist.");
+                }
+                if ($.fn.DataTable.isDataTable(tableName)) {
+                    tableName.DataTable().destroy();
+                    tableName.empty();
+                }
+                var parseJSONResult = jQuery.parseJSON(data);
+                if (parseJSONResult != null && parseJSONResult.length > 0) {
+                    var dynamicColumns = [];
+                    var i = 0;
+                    $.each(parseJSONResult[0], function (key, value) {
+                        var obj = { sTitle: key };
+                        dynamicColumns[i] = obj;
+                        i++;
+                    });
+                    var rowDataSet = [];
+                    var i = 0;
+                    $.each(parseJSONResult, function (key, value) {
+                        var rowData = [];
+                        var j = 0;
+                        $.each(parseJSONResult[i], function (key, value) {
+                            rowData[j] = value;
+                            j++;
+                        });
+                        rowDataSet[i] = rowData;
+
+                        i++;
+                    });
+                    tableName.DataTable({
+                        destroy: true,
+                        lengthChange: false,
+                        aaData: rowDataSet,
+                        columns: dynamicColumns,
+                        buttons: ['excel', 'pdf']
+                    });
+                    var table = $(tableName).DataTable();
+                    table.buttons().container().appendTo('#tblSummary_wrapper .col-md-6:eq(0)');
+                }
+            }
+            catch (ex) {
+                alert(ex.message);
+            }
+        }
+
+        $("input").on('input', function () {
+            $(this).val($(this).val().replace(/[^A-Za-z0-9. ]/g, ''));
+        });
+
+        $(".number").on('input', function () {
+            $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+        });
+    </script>
+</body>
+</html>

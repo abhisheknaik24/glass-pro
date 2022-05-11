@@ -1,0 +1,21 @@
+﻿.card {
+    margin: 1px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+}
+
+thead {
+    background-color: mediumpurple;
+}
+
+th, td {
+    white-space: nowrap;
+}

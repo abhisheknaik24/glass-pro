@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div>
+    <h3 class="text-secondary">Dashboard - <span id="Month"></span></h3>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-3 col-sm-12">
+                <select class="form-select" id="Type" onchange="GetDashboard()">
+                    <option value="pie">Pie Chart</option>
+                    <option value="polarArea">Polar Area Chart</option>
+                    <option value="bar">Bar Chart</option>
+                    <option value="doughnut">Doughnut Chart</option>
+                    <option value="line">Line Chart</option>
+                </select>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <canvas id="myChart" width="300" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        GetDashboard();
+    });
+
+    function GetDashboard() {
+        var Type = $("#Type").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Dashboard/GetDashboard',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                var MonthValue = [];
+                for (var i = 0; i < response.length; i++) {
+                    MonthValue.push(response[i].Counts);
+                }
+
+                let chartStatus = Chart.getChart('myChart');
+                if (chartStatus != undefined) {
+                    chartStatus.destroy();
+                }
+                
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: Type,
+                    data: {
+                        labels: ['Purchases Qty', 'Work Orders Qty', 'Dispatchs Qty'],
+                        datasets: [{
+                            label: 'Counts',
+                            data: MonthValue,
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(255, 205, 86)',
+                                'rgb(54, 162, 235)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

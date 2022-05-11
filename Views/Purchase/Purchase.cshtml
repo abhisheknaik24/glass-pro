@@ -1,0 +1,489 @@
+﻿
+@{
+    ViewBag.Title = "Purchase";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div id="Summary">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Purchase Summary</h3>
+        <button class="btn btn-success" title="Add" data-toggle="tooltip" data-placement="bottom" onclick="ShowEntry()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-responsive" id="tblSummary"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Entry" style="display: none;">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Purchase</h3>
+        <button class="btn btn-primary" title="Summary" data-toggle="tooltip" data-placement="bottom" onclick="ShowSummary()"><i class="fa fa-file-text"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                @Html.DropDownList("Item", (IEnumerable<SelectListItem>)ViewBag.Items, "--Select--", new { @class = "form-select", @id = "Item", onchange = "Rate()", autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Rate</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="Rate" placeholder="Rate" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Qty</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="Qty" placeholder="Qty" value="0" onchange="CalculateAmount()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Purchase Date</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                @Html.TextBox("PurchaseDate", null, new { @class = "form-control datePicker", @id = "PurchaseDate", @Value = DateTime.Now.ToString("dd MMM yyyy") })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Amount" placeholder="Amount" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Discount Percentage</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <select class="form-select" id="DiscountPercentage" onchange="CalculateAmount()">
+                                    <option value="0">--Select--</option>
+                                    <option value="5">5%</option>
+                                    <option value="10">10%</option>
+                                    <option value="15">15%</option>
+                                    <option value="20">20%</option>
+                                    <option value="30">30%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Discount Amount</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="DiscountAmount" placeholder="Discount Amount" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Net Amount</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="NetAmount" placeholder="Net Amount" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">GST Percentage</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <select class="form-select" id="GSTPercentage" onchange="CalculateAmount()">
+                                    <option value="0">--Select--</option>
+                                    <option value="5">5%</option>
+                                    <option value="12">12%</option>
+                                    <option value="18">18%</option>
+                                    <option value="28">28%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">GST Amount</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="GSTAmount" placeholder="GST Amount" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Gross Amount</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="GrossAmount" placeholder="Gross Amount" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label" style="visibility:hidden;">.</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <button class="btn btn-primary" title="Add" data-toggle="tooltip" data-placement="bottom" onclick="Add()"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover tbl-cart text-nowrap" id="tblItem">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Rate</th>
+                                    <th>Qty</th>
+                                    <th>Amount</th>
+                                    <th>Discount Amount</th>
+                                    <th>Net Amount</th>
+                                    <th>GST Amount</th>
+                                    <th>Gross Amount</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="offset-9 col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Net Total</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="NetTotal" placeholder="Net Total" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-9 col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Grand Total</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="GrandTotal" placeholder="Grand Total" value="0.00" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <button class="btn btn-success" title="Save" data-toggle="tooltip" data-placement="bottom" onclick="Save()"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Items = [];
+
+    $(document).ready(function () {
+        $("#tblItem").DataTable({
+            destroy: true,
+            lengthChange: false,
+        });
+        Load();
+    });
+
+    function ShowEntry() {
+        $("#Summary").hide();
+        $("#Entry").show();
+    }
+
+    function ShowSummary() {
+        $("#Entry").hide();
+        $("#Summary").show();
+        Load();
+    }
+
+    function Load() {
+        $.ajax({
+            type: 'POST',
+            url: '/Purchase/LoadPurchase',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response == "0" || response == "[]") {
+                    $("#tblSummary").empty();
+                    return;
+                }
+                $("#tblSummary").empty();;
+                Table($("#tblSummary"), response, "Summary", "Summary");
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function Rate() {
+        var Check = true;
+        var ItemId = $("#Item").val();
+
+        if (ItemId == "") {
+            $('#Item').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Item').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        var data = { "ItemId": ItemId };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Purchase/RatePurchase',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.length != 0) {
+                    $("#Rate").val(parseFloat(response[0].Rate).toFixed(2));
+                    CalculateAmount();
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function CalculateAmount() {
+        var Rate = parseFloat($("#Rate").val());
+        var Qty = parseInt($("#Qty").val());
+        var Amount = parseFloat(Rate * Qty);
+        $("#Amount").val(parseFloat(Amount).toFixed(2));
+        var DiscountPercentage = parseInt($("#DiscountPercentage").val());
+        var DiscountAmount = parseFloat((Amount / 100) * DiscountPercentage);
+        $("#DiscountAmount").val(parseFloat(DiscountAmount).toFixed(2));
+        var NetAmount = parseFloat(Amount + DiscountAmount);
+        $("#NetAmount").val(parseFloat(NetAmount).toFixed(2));
+        var GSTPercentage = parseInt($("#GSTPercentage").val());
+        var GSTAmount = parseFloat((NetAmount / 100) * GSTPercentage);
+        $("#GSTAmount").val(parseFloat(GSTAmount).toFixed(2));
+        var GrossAmount = parseFloat(NetAmount + GSTAmount);
+        $("#GrossAmount").val(parseFloat(GrossAmount).toFixed(2));
+    }
+
+    function CalculateTotal() {
+        var NetTotal = 0;
+        var GrandTotal = 0;
+        for (var i = 0; i < Items.length; i++) {
+            NetTotal = parseFloat(NetTotal) + parseFloat(Items[i].NetAmount);
+            $("#NetTotal").val(parseFloat(NetTotal).toFixed(2));
+            GrandTotal = parseFloat(GrandTotal) + parseFloat(Items[i].GrossAmount);
+            $("#GrandTotal").val(parseFloat(GrandTotal).toFixed(2));
+        }
+    }
+
+    function Add() {
+        var Check = true;
+        var element = {};
+        element.ItemId = $("#Item").val();
+        element.ItemName = $("#Item option:selected").text();
+        if (Items.find(e => e.ItemName == element.ItemName)) {
+            Swal.fire({
+                title: 'Error',
+                text: "Item alreay added!",
+                icon: 'error'
+            });
+            return false;
+        }
+        if (element.ItemId == "" || element.ItemName == "--Select--") {
+            $('#Item').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Item').removeClass("is-invalid");
+        }
+        element.Rate = $("#Rate").val();
+        if (element.Rate == "0.00") {
+            $('#Rate').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Rate').removeClass("is-invalid");
+        }
+        element.Qty = $("#Qty").val();
+        if (element.Qty == "0") {
+            $('#Qty').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Qty').removeClass("is-invalid");
+        }
+        element.Amount = $("#Amount").val();
+        if (element.Amount == "0.00") {
+            $('#Amount').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Amount').removeClass("is-invalid");
+        }
+        element.DiscountPercentage = $("#DiscountPercentage").val();
+        element.DiscountAmount = $("#DiscountAmount").val();
+        element.NetAmount = $("#NetAmount").val();
+        if (element.NetAmount == "0.00") {
+            $('#NetAmount').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#NetAmount').removeClass("is-invalid");
+        }
+        element.GSTPercentage = $("#GSTPercentage").val();
+        element.GSTAmount = $("#GSTAmount").val();
+        element.GrossAmount = $("#GrossAmount").val();
+        if (element.GrossAmount == "0.00") {
+            $('#GrossAmount').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#GrossAmount').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        } else {
+            Items.push(element);
+
+            $('#tblItem').DataTable({
+                destroy: true,
+                lengthChange: false,
+                aaData: Items,
+                columns: [
+                    { "data": "ItemName" },
+                    { "data": "Rate" },
+                    { "data": "Qty" },
+                    { "data": "Amount" },
+                    { "data": "DiscountAmount" },
+                    { "data": "NetAmount" },
+                    { "data": "GSTAmount" },
+                    { "data": "GrossAmount" }
+                ]
+            });
+
+            CalculateTotal();
+        }
+    }
+
+    function Save() {
+        var Check = true;
+        var PurchaseDate = $("#PurchaseDate").val();
+        var NetTotal = $("#NetTotal").val();
+        var GrandTotal = $("#GrandTotal").val();
+
+        if (PurchaseDate == "") {
+            $('#PurchaseDate').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#PurchaseDate').removeClass("is-invalid");
+        }
+
+        if (Items.length == 0) {
+            Check = Check && false;
+        }
+
+        if (NetTotal == "0.00") {
+            $('#NetTotal').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#NetTotal').removeClass("is-invalid");
+        }
+
+        if (GrandTotal == "0.00") {
+            $('#GrandTotal').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#GrandTotal').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        var data = { "PurchaseDate": PurchaseDate, "NetTotal": NetTotal, "GrandTotal": GrandTotal, "Items": Items };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Purchase/SavePurchase',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.Status != 0) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.Message,
+                        icon: 'success'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.Message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

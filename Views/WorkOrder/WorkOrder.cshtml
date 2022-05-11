@@ -1,0 +1,490 @@
+﻿
+@{
+    ViewBag.Title = "Work Order";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div id="Summary">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Work Order Summary</h3>
+        <button class="btn btn-success" title="Add" data-toggle="tooltip" data-placement="bottom" onclick="ShowEntry()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-responsive" id="tblSummary"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Entry" style="display: none;">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Work Order</h3>
+        <button class="btn btn-primary" title="Summary" data-toggle="tooltip" data-placement="bottom" onclick="ShowSummary()"><i class="fa fa-file-text"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-9 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="CustomerName" placeholder="Customer Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Work Order Date</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                @Html.TextBox("WorkOrderDate", null, new { @class = "form-control datePicker", @id = "WorkOrderDate", @Value = DateTime.Now.ToString("dd MMM yyyy") })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-9 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Address" placeholder="Address" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Phone No.</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="PhoneNo" placeholder="Phone No." maxlength="10" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                @Html.DropDownList("Item", (IEnumerable<SelectListItem>)ViewBag.Items, "--Select--", new { @class = "form-select", @id = "Item", onchange = "InStockQty()", autocomplete = "off" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">In Stock Qty</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="InStockQty" placeholder="In Stock Qty" value="0" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Qty</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="Qty" placeholder="Qty" value="0" onchange="CheckQty()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label" style="visibility:hidden;">.</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <button class="btn btn-primary" title="Add" data-toggle="tooltip" data-placement="bottom" onclick="Add()"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover tbl-cart text-nowrap" id="tblItem">
+                            <thead>
+                                <tr>
+                                    <th>Sr. No.</th>
+                                    <th>Item Name</th>
+                                    <th>Qty</th>
+                                    <th>Cutting</th>
+                                    <th>Polishing</th>
+                                    <th>Fabrication</th>
+                                    <th>Toughening</th>
+                                    <th>DGU</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-lg-3 col-sm-12">
+                    <button class="btn btn-success" title="Save" data-toggle="tooltip" data-placement="bottom" onclick="Save()"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Items = [];
+    var SrNo = 0;
+
+    $(document).ready(function () {
+        $("#tblItem").DataTable({
+            destroy: true,
+            lengthChange: false,
+        });
+        Load();
+    });
+
+    function ShowEntry() {
+        $("#Summary").hide();
+        $("#Entry").show();
+    }
+
+    function ShowSummary() {
+        $("#Entry").hide();
+        $("#Summary").show();
+        Load();
+    }
+
+    function Load() {
+        $.ajax({
+            type: 'POST',
+            url: '/WorkOrder/LoadWorkOrder',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response == "0" || response == "[]") {
+                    $("#tblSummary").empty();
+                    return;
+                }
+                $("#tblSummary").empty();;
+                Table($("#tblSummary"), response, "Summary", "Summary");
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function InStockQty() {
+        var Check = true;
+        var ItemId = $("#Item").val();
+
+        if (ItemId == "") {
+            $('#Item').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Item').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        var data = { "ItemId": ItemId };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/WorkOrder/InStockQtyWorkOrder',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.length != 0) {
+                    $("#InStockQty").val(response[0].InStockQty);
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function CheckQty() {
+        var Check = true;
+        var InStockQty = parseInt($("#InStockQty").val());
+        var Qty = parseInt($("#Qty").val());
+
+        if (InStockQty < Qty) {
+            $('#Qty').addClass("is-invalid");
+            $('#Qty').val(0);
+            Check = Check && false;
+        } else {
+            $('#Qty').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Qty should be equal and less than in stock qty!",
+                icon: 'error'
+            });
+            return false;
+        }
+    }
+
+    function Add() {
+        var Check = true;
+        var element = {};
+        element.CustomerName = $("#CustomerName").val();
+        if (element.CustomerName == "") {
+            $('#CustomerName').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#CustomerName').removeClass("is-invalid");
+        }
+        element.Address = $("#Address").val();
+        if (element.Address == "") {
+            $('#Address').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Address').removeClass("is-invalid");
+        }
+        element.PhoneNo = $("#PhoneNo").val();
+        if (element.PhoneNo == "" || element.PhoneNo.length < 10) {
+            $('#PhoneNo').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#PhoneNo').removeClass("is-invalid");
+        }
+        element.ItemId = $("#Item").val();
+        element.ItemName = $("#Item option:selected").text();
+        if (Items.find(e => e.ItemName == element.ItemName)) {
+            Swal.fire({
+                title: 'Error',
+                text: "Item alreay added!",
+                icon: 'error'
+            });
+            return false;
+        }
+        if (element.ItemId == "" || element.ItemName == "--Select--") {
+            $('#Item').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Item').removeClass("is-invalid");
+        }
+        element.Qty = $("#Qty").val();
+        if (element.Qty == "0") {
+            $('#Qty').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Qty').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        } else {
+            SrNo = SrNo + 1;
+            element.SrNo = SrNo;
+            Items.push(element);
+
+            $('#tblItem').DataTable({
+                destroy: true,
+                lengthChange: false,
+                aaData: Items,
+                columns: [
+                    {
+                        "data": "ItemId",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<input type='hidden' id='ItemId" + row.SrNo + "' value='" + row.ItemId + "'>" + row.SrNo;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "ItemName",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<input type='hidden' id='ItemName" + row.SrNo + "' value='" + row.ItemName + "'>" + row.ItemName;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "Qty",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<input type='hidden' id='tblQty" + row.SrNo + "' value='" + row.Qty + "'>" + row.Qty;
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "SrNo",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<div class='form-check'><input type='checkbox' class='form-check-input' id='Cutting" + row.SrNo + "' /></div>";
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "SrNo",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<div class='form-check'><input type='checkbox' class='form-check-input' id='Polishing" + row.SrNo + "' /></div>";
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "SrNo",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<div class='form-check'><input type='checkbox' class='form-check-input' id='Fabrication" + row.SrNo + "' /></div>";
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "SrNo",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<div class='form-check'><input type='checkbox' class='form-check-input' id='Toughening" + row.SrNo + "' /></div>";
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        "data": "SrNo",
+                        "orderable": false,
+                        "render": function (data, type, row, meta) {
+                            if (type === 'display') {
+                                data = "<div class='form-check'><input type='checkbox' class='form-check-input' id='DGU" + row.SrNo + "' /></div>";
+                            }
+                            return data;
+                        }
+                    },
+                ]
+            });
+        }
+    }
+
+    function Save() {
+        var Production = [];
+        var Check = true;
+        var WorkOrderDate = $("#WorkOrderDate").val();
+        var CustomerName = $("#CustomerName").val();
+        var Address = $("#Address").val();
+        var PhoneNo = $("#PhoneNo").val();
+
+        if (WorkOrderDate == "") {
+            $('#WorkOrderDate').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#WorkOrderDate').removeClass("is-invalid");
+        }
+
+        if (CustomerName == "") {
+            $('#CustomerName').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#CustomerName').removeClass("is-invalid");
+        }
+
+        if (Address == "") {
+            $('#Address').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Address').removeClass("is-invalid");
+        }
+
+        if (PhoneNo == "") {
+            $('#PhoneNo').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#PhoneNo').removeClass("is-invalid");
+        }
+
+        if (Items.length == 0) {
+            Check = Check && false;
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        for (var i = 1; i <= SrNo; i++) {
+            var element = {};
+            element.ItemId = $("#ItemId" + i).val();
+            element.ItemName = $("#ItemName" + i).val();
+            element.Qty = $("#tblQty" + i).val();
+            element.Cutting = $("#Cutting" + i).is(':checked');
+            element.Polishing = $("#Polishing" + i).is(':checked');
+            element.Fabrication = $("#Fabrication" + i).is(':checked');
+            element.Toughening = $("#Toughening" + i).is(':checked');
+            element.DGU = $("#DGU" + i).is(':checked');
+            Production.push(element);
+        }
+
+        var data = { "WorkOrderDate": WorkOrderDate, "CustomerName": CustomerName, "Address": Address, "PhoneNo": PhoneNo, "Production": Production };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/WorkOrder/SaveWorkOrder',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.Status != 0) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.Message,
+                        icon: 'success'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.Message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

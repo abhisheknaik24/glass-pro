@@ -1,0 +1,244 @@
+﻿
+@{
+    ViewBag.Title = "Item";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div id="Summary">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Item Summary</h3>
+        <button class="btn btn-success" title="Add" data-toggle="tooltip" data-placement="bottom" onclick="ShowEntry()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-responsive" id="tblSummary"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Entry" style="display: none">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-secondary">Item</h3>
+        <button class="btn btn-primary" title="Summary" data-toggle="tooltip" data-placement="bottom" onclick="ShowSummary()"><i class="fa fa-file-text"></i></button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="ItemName" placeholder="Item Name" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Rate</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control number" id="Rate" placeholder="Rate" value="0.00" onchange="CalculateAmount()" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="text" class="form-control" id="Unit" value="SQM" placeholder="Unit" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Height</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="number" class="form-control number" id="Height" placeholder="Height" min="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                        <label class="form-label">Width</label>
+                        <div class="row gutters-xs">
+                            <div class="col">
+                                <input type="number" class="form-control number" id="Width" placeholder="Width" min="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-3 col-sm-12">
+                    <button class="btn btn-success" title="Save" data-toggle="tooltip" data-placement="bottom" onclick="Save()"><i class="fa fa-save"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var ItemId = 0;
+
+    $(document).ready(function () {
+        Load();
+    });
+
+    function Load() {
+        $.ajax({
+            type: 'POST',
+            url: '/Master/LoadItem',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response == "0" || response == "[]") {
+                    $("#tblSummary").empty();
+                    return;
+                }
+                $("#tblSummary").empty();;
+                Table($("#tblSummary"), response, "Summary", "Summary");
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function ShowEntry() {
+        $("#Summary").hide();
+        $("#Entry").show();
+    }
+
+    function ShowSummary() {
+        $("#Entry").hide();
+        $("#Summary").show();
+        Load();
+    }
+
+    function CalculateAmount() {
+        var Rate = parseFloat($("#Rate").val());
+        $("#Rate").val(parseFloat(Rate).toFixed(2));
+    }
+
+    function Save() {
+        var Check = true;
+        var ItemName = $('#ItemName').val();
+        var Rate = $('#Rate').val();
+        var Unit = $('#Unit').val();
+        var Height = $('#Height').val();
+        var Width = $('#Width').val();
+
+        if (ItemName == "") {
+            $('#ItemName').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#ItemName').removeClass("is-invalid");
+        }
+
+        if (Rate == "") {
+            $('#Rate').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Rate').removeClass("is-invalid");
+        }
+
+        if (Unit == "") {
+            $('#Unit').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Unit').removeClass("is-invalid");
+        }
+
+        if (Height == "" || Height == 0) {
+            $('#Height').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Height').removeClass("is-invalid");
+        }
+
+        if (Width == "" || Width == 0) {
+            $('#Width').addClass("is-invalid");
+            Check = Check && false;
+        } else {
+            $('#Width').removeClass("is-invalid");
+        }
+
+        if (Check == false) {
+            Swal.fire({
+                title: 'Error',
+                text: "Please enter requied fields!",
+                icon: 'error'
+            });
+            return false;
+        }
+
+        var data = { "ItemId": ItemId, "ItemName": ItemName, "Rate": Rate, "Unit": Unit, "Height": Height, "Width": Width };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Master/SaveItem',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.Status != 0) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.Message,
+                        icon: 'success'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.Message,
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+
+    function Update(Id) {
+        var data = { 'ItemId': Id };
+        data = JSON.stringify(data);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Master/UpdateItem',
+            data: data,
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.length != 0) {
+                    ItemId = response[0].ItemId;
+                    $("#ItemName").val(response[0].ItemName);
+                    $("#ItemName").prop("disabled", true);
+                    $("#Rate").val(response[0].Rate);
+                    $("#Unit").val(response[0].Unit);
+                    $("#Height").val(response[0].Height);
+                    $("#Width").val(response[0].Width);
+                    $("#Summary").hide();
+                    $("#Entry").show();
+                }
+            },
+            error: function (error) {
+                alert(error.responseText);
+            }
+        });
+    }
+</script>

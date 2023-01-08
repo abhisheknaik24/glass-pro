@@ -94,19 +94,32 @@ namespace MyApp.Controllers
 
         public JsonResult SendEmail(string Email, int OTP, string Message)
         {
-            bool IsSent = false;
-            IsSent = DBModel.SendEmail(Email, OTP, Message);
             ResponseModel responseModel = new ResponseModel();
-            if (IsSent == true)
+            DataTable dataTable = new DataTable();
+            dataTable = DBModel.GetDataTable("USP_SaveOTP '" + Email + "','" + OTP + "'");
+            if (dataTable.Rows.Count > 0)
             {
-                DataTable dataTable = new DataTable();
-                dataTable = DBModel.GetDataTable("USP_SaveOTP '" + Email + "','" + OTP + "'");
-                if (dataTable.Rows.Count > 0)
+                foreach (DataRow row in dataTable.Rows)
                 {
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        responseModel.Status = Convert.ToInt32(row["Status"]);
-                    }
+                    responseModel.Status = Convert.ToInt32(row["Status"]);
+                }
+            }
+            var jsonResult = Json(responseModel, JsonRequestBehavior.AllowGet);
+            jsonResult.MaxJsonLength = int.MaxValue;
+            return jsonResult;
+        }
+
+        public JsonResult VerifyOTP(string Email, int OTP)
+        {
+            ResponseModel responseModel = new ResponseModel();
+            DataTable dataTable = new DataTable();
+            dataTable = DBModel.GetDataTable("USP_VerifyOTP '" + Email + "','" + OTP + "'");
+            if (dataTable.Rows.Count > 0)
+            {
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    responseModel.Status = Convert.ToInt32(row["Status"]);
+                    responseModel.Message = Convert.ToString(row["Message"]);
                 }
             }
             var jsonResult = Json(responseModel, JsonRequestBehavior.AllowGet);
